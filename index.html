@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="劉軒瑋｜伊隆國際股份有限公司創辦人，專注 AI 教育、Robotics、Roblox AI Gaming Design 與兒童科技學習解決方案。" />
+  <title>劉軒瑋｜AI Robotics / Roblox AI Gaming Design</title>
+
+  <!-- Tailwind CSS CDN：直接儲存為 index.html 即可執行，不需 npm -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-dyZ+NACZmGYj3K7NZJYrr5tP1O1V2ZQ2O/jdI3IPY14lyf5QwK/4BIu5VVZfNd3Dm/7x0xqjkZ7K0R0O16fQ2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            techBlue: '#6655F2',
+            premiumPurple: '#9D7BFF',
+            mint: '#FF7DAB',
+            ink: '#1F2A44',
+            muted: '#47546B',
+            mist: '#FAFBFF',
+            paleBlue: '#BEEBFF'
+          },
+          boxShadow: {
+            glow: '0 20px 70px rgba(102, 85, 242, 0.16)',
+            mintGlow: '0 0 36px rgba(255, 125, 171, 0.25)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* =========================
+       Global Design Tokens
+       ========================= */
+    :root {
+      --tech-blue: #6655F2;
+      --premium-purple: #9D7BFF;
+      --mint: #FF7DAB;
+      --ink: #1F2A44;
+      --muted: #47546B;
+      --mist: #FAFBFF;
+      --pale-blue: #BEEBFF;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(102, 85, 242, 0.12), transparent 28%),
+        radial-gradient(circle at 82% 20%, rgba(157, 123, 255, 0.10), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(255, 125, 171, 0.10), transparent 34%),
+        linear-gradient(180deg, #ffffff 0%, #FAFBFF 45%, #BEEBFF 100%);
+      overflow-x: hidden;
+    }
+
+    /* 淡藍科技網格背景 */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -3;
+      background-image:
+        linear-gradient(rgba(102, 85, 242, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(102, 85, 242, 0.055) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
+    }
+
+    /* 資料流線條 */
+    .data-streams {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .stream-line {
+      position: absolute;
+      width: 1px;
+      height: 180px;
+      background: linear-gradient(to bottom, transparent, rgba(102, 85, 242, 0.22), transparent);
+      animation: streamDrop 8s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes streamDrop {
+      0% { transform: translateY(-220px); opacity: 0; }
+      15% { opacity: 0.7; }
+      100% { transform: translateY(calc(100vh + 260px)); opacity: 0; }
+    }
+
+    /* 粒子 Canvas */
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    /* 玻璃擬態卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
+    }
+
+    .gradient-border {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gradient-border::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(102, 85, 242, 0.65), rgba(157, 123, 255, 0.55), rgba(255, 125, 171, 0.48));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+
+    .gradient-border:hover::before {
+      opacity: 1;
+    }
+
+    .hover-lift {
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 28px 90px rgba(102, 85, 242, 0.16), 0 0 34px rgba(255, 125, 171, 0.16);
+      border-color: rgba(102, 85, 242, 0.28);
+    }
+
+    /* CTA 按鈕 Hover 狀態提示 */
+    .cta-status .status-text {
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: max-width 0.4s ease, opacity 0.25s ease, margin-left 0.35s ease;
+    }
+
+    .cta-status:hover .status-text {
+      max-width: 220px;
+      opacity: 1;
+      margin-left: 0.6rem;
+    }
+
+    .cta-status:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 50px rgba(255, 125, 171, 0.25);
+    }
+
+    /* 滾動進場動畫 */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 浮動科技面板 */
+    .float-slow {
+      animation: floatSlow 6s ease-in-out infinite;
+    }
+
+    .float-delay {
+      animation: floatSlow 7.5s ease-in-out infinite;
+      animation-delay: -2s;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+
+    .typing-cursor::after {
+      content: "|";
+      display: inline-block;
+      margin-left: 6px;
+      color: var(--tech-blue);
+      animation: blink 0.85s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(102, 85, 242, 0.16);
+      background: rgba(190, 235, 255, 0.72);
+      color: #6655F2;
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .section-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--mint);
+      box-shadow: 0 0 18px rgba(255, 125, 171, 0.65);
+    }
+
+    .mobile-menu {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+    }
+
+    .mobile-menu.open {
+      max-height: 420px;
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 背景層：AI 網格、資料流、粒子節點 -->
+  <div class="grid-overlay"></div>
+  <div class="data-streams" aria-hidden="true">
+    <span class="stream-line" style="left: 8%; animation-delay: 0s;"></span>
+    <span class="stream-line" style="left: 22%; animation-delay: 2.4s; height: 120px;"></span>
+    <span class="stream-line" style="left: 47%; animation-delay: 1.2s; height: 210px;"></span>
+    <span class="stream-line" style="left: 73%; animation-delay: 3.6s; height: 150px;"></span>
+    <span class="stream-line" style="left: 90%; animation-delay: 5s;"></span>
+  </div>
+  <canvas id="particleCanvas" aria-hidden="true"></canvas>
+
+  <!-- 固定式導覽列 -->
+  <header class="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/60 bg-white/72 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8" aria-label="主要導覽">
+      <a href="#home" class="group flex items-center gap-3">
+        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-techBlue to-premiumPurple text-sm font-black text-white shadow-glow">E</span>
+        <span class="leading-tight">
+          <span class="block text-sm font-black tracking-tight text-ink">劉軒瑋</span>
+          <span class="block text-xs font-semibold text-muted">Elon International</span>
+        </span>
+      </a>
+
+      <div class="hidden items-center gap-8 text-sm font-semibold text-slate-600 lg:flex">
+        <a class="nav-link transition hover:text-techBlue" href="#home">首頁</a>
+        <a class="nav-link transition hover:text-techBlue" href="#about">關於伊隆</a>
+        <a class="nav-link transition hover:text-techBlue" href="#solutions">AI 解決方案</a>
+        <a class="nav-link transition hover:text-techBlue" href="#cases">實戰案例</a>
+        <a class="rounded-full border border-purple-200 bg-white/80 px-5 py-2 text-techBlue shadow-sm transition hover:-translate-y-0.5 hover:border-mint hover:shadow-mintGlow" href="#contact">預約諮詢</a>
+      </div>
+
+      <button id="menuBtn" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 text-ink lg:hidden" aria-label="開啟手機導覽" aria-expanded="false">
+        <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- 手機版展開選單 -->
+    <div id="mobileMenu" class="mobile-menu border-t border-slate-200/70 bg-white/92 px-5 lg:hidden">
+      <div class="mx-auto flex max-w-7xl flex-col gap-2 py-4 text-sm font-semibold text-slate-700">
+        <a class="mobile-link rounded-2xl px-4 py-3 hover:bg-purple-50 hover:text-techBlue" href="#home">首頁</a>
+        <a class="mobile-link rounded-2xl px-4 py-3 hover:bg-purple-50 hover:text-techBlue" href="#about">關於伊隆</a>
+        <a class="mobile-link rounded-2xl px-4 py-3 hover:bg-purple-50 hover:text-techBlue" href="#solutions">AI 解決方案</a>
+        <a class="mobile-link rounded-2xl px-4 py-3 hover:bg-purple-50 hover:text-techBlue" href="#cases">實戰案例</a>
+        <a class="mobile-link rounded-2xl bg-gradient-to-r from-techBlue to-premiumPurple px-4 py-3 text-white shadow-glow" href="#contact">預約諮詢</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="relative flex min-h-screen items-center overflow-hidden px-5 pb-20 pt-32 lg:px-8 lg:pt-28">
+      <div class="absolute left-1/2 top-24 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-purple-200/35 blur-3xl"></div>
+      <div class="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.06fr_0.94fr]">
+        <div class="reveal">
+          <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-white/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-techBlue shadow-sm backdrop-blur-xl">
+            <span class="h-2 w-2 rounded-full bg-mint shadow-[0_0_18px_rgba(16,185,129,0.75)]"></span>
+            AI Education Consultant
+          </div>
+
+          <h1 class="max-w-5xl text-4xl font-black tracking-tight text-ink sm:text-5xl lg:text-7xl">
+            <span id="typewriter" class="typing-cursor bg-gradient-to-r from-techBlue via-premiumPurple to-mint bg-clip-text text-transparent"></span>
+          </h1>
+
+          <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
+            Elon helps schools and young learners transform creativity, coding, and AI knowledge into real-world digital projects.
+          </p>
+
+          <p class="mt-5 max-w-2xl text-xl font-bold leading-9 text-ink sm:text-2xl">
+            讓孩子不只是學科技，而是用 AI 創造自己的未來。
+          </p>
+
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+            <a href="https://calendar.app.google/NwBgNLT8yzHWmxRZ6" target="_blank" rel="noopener noreferrer" class="cta-status inline-flex items-center justify-center rounded-full border border-purple-200 bg-white/80 px-6 py-4 text-sm font-black text-techBlue shadow-glow backdrop-blur-xl transition">
+              預約諮詢
+              <span class="status-text text-mint">Status: Ready to Connect</span>
+            </a>
+            <a href="#solutions" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-techBlue to-premiumPurple px-6 py-4 text-sm font-black text-white shadow-glow transition hover:-translate-y-1 hover:shadow-mintGlow">
+              探索 AI 課程
+            </a>
+          </div>
+
+          <div class="mt-10 grid max-w-xl grid-cols-2 gap-3 text-sm text-slate-600 sm:grid-cols-4">
+            <div class="rounded-2xl border border-slate-200 bg-white/65 p-3 backdrop-blur-xl"><strong class="block text-ink">6+</strong> 年經驗</div>
+            <div class="rounded-2xl border border-slate-200 bg-white/65 p-3 backdrop-blur-xl"><strong class="block text-ink">7+</strong> 合作單位</div>
+            <div class="rounded-2xl border border-slate-200 bg-white/65 p-3 backdrop-blur-xl"><strong class="block text-ink">AI</strong> Robotics</div>
+            <div class="rounded-2xl border border-slate-200 bg-white/65 p-3 backdrop-blur-xl"><strong class="block text-ink">Roblox</strong> Design</div>
+          </div>
+        </div>
+
+        <!-- 右側 AI Dashboard 視覺 -->
+        <div class="reveal relative min-h-[520px]">
+          <div class="absolute right-0 top-2 h-72 w-72 rounded-full bg-purple-200/40 blur-3xl"></div>
+          <div class="glass-card gradient-border float-slow relative mx-auto max-w-xl rounded-[2rem] p-6">
+            <div class="mb-6 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.18em] text-techBlue">AI Learning System</p>
+                <h2 class="mt-2 text-2xl font-black text-ink">Future Classroom OS</h2>
+              </div>
+              <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-techBlue to-premiumPurple text-white shadow-glow">
+                ✦
+              </div>
+            </div>
+
+            <div class="grid gap-4">
+              <div class="rounded-3xl border border-purple-200 bg-purple-50/65 p-5">
+                <div class="mb-3 flex items-center justify-between text-sm font-bold text-ink">
+                  <span>Robotics Curriculum</span>
+                  <span class="text-mint">Live</span>
+                </div>
+                <div class="h-2 overflow-hidden rounded-full bg-white">
+                  <div class="h-full w-[82%] rounded-full bg-gradient-to-r from-techBlue to-mint"></div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="rounded-3xl border border-slate-200 bg-white/75 p-5">
+                  <p class="text-xs font-bold uppercase tracking-wide text-muted">Mode</p>
+                  <p class="mt-2 text-lg font-black text-ink">Project-Based</p>
+                </div>
+                <div class="rounded-3xl border border-slate-200 bg-white/75 p-5">
+                  <p class="text-xs font-bold uppercase tracking-wide text-muted">Output</p>
+                  <p class="mt-2 text-lg font-black text-ink">Digital Works</p>
+                </div>
+              </div>
+
+              <div class="rounded-3xl border border-purple-100 bg-purple-50/60 p-5">
+                <div class="mb-5 flex items-center justify-between">
+                  <span class="text-sm font-black text-ink">Roblox Creative Design</span>
+                  <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-premiumPurple">AI Assisted</span>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                  <span class="h-16 rounded-2xl bg-white/90 shadow-sm"></span>
+                  <span class="h-16 rounded-2xl bg-gradient-to-br from-purple-100 to-white shadow-sm"></span>
+                  <span class="h-16 rounded-2xl bg-gradient-to-br from-purple-100 to-white shadow-sm"></span>
+                  <span class="h-16 rounded-2xl bg-gradient-to-br from-pink-100 to-white shadow-sm"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card gradient-border float-delay absolute bottom-0 left-0 hidden w-72 rounded-[1.5rem] p-5 shadow-glow sm:block">
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-mint">Learning Signal</p>
+            <p class="mt-2 text-xl font-black text-ink">Creativity × Coding × AI</p>
+            <p class="mt-2 text-sm leading-6 text-muted">將科技學習轉化為孩子看得見的作品與自信。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 關於伊隆 -->
+    <section id="about" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="reveal mb-12 max-w-3xl">
+          <span class="section-label">About Elon International</span>
+          <h2 class="mt-5 text-3xl font-black tracking-tight text-ink sm:text-5xl">懂教育，也懂孩子如何用科技創作。</h2>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <article class="reveal glass-card rounded-[2rem] p-8 lg:p-10">
+            <p class="text-lg leading-9 text-slate-600">
+              我是劉軒瑋，伊隆國際股份有限公司創辦人，長期投入 AI 教育、兒童科技學習與創意程式設計領域。六年來，我持續協助學校與教育單位將人工智慧、機器人教育與 Roblox 遊戲創作轉化為學生能理解、能操作、能完成作品的學習內容。
+            </p>
+            <p class="mt-6 text-lg leading-9 text-slate-600">
+              課程設計以「做中學」與「創作導向」為核心，讓孩子不只是學會工具，而是能在真實情境中培養邏輯思考、問題解決、互動設計與數位表達能力。作為教育科技創業者，我相信未來學習不只是吸收知識，而是讓孩子善用科技表達想法、創造作品並連結世界。
+            </p>
+          </article>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="reveal glass-card gradient-border hover-lift rounded-[1.75rem] p-6">
+              <p class="text-4xl font-black text-techBlue">6+</p>
+              <p class="mt-2 font-bold text-ink">年教育科技經驗</p>
+              <p class="mt-2 text-sm leading-6 text-muted">課程規劃、教學推廣與校園導入經驗。</p>
+            </div>
+            <div class="reveal glass-card gradient-border hover-lift rounded-[1.75rem] p-6">
+              <p class="text-4xl font-black text-premiumPurple">7+</p>
+              <p class="mt-2 font-bold text-ink">合作教育單位</p>
+              <p class="mt-2 text-sm leading-6 text-muted">與國小、私校及國際學校推動科技課程。</p>
+            </div>
+            <div class="reveal glass-card gradient-border hover-lift rounded-[1.75rem] p-6">
+              <p class="text-4xl font-black text-mint">AI</p>
+              <p class="mt-2 font-bold text-ink">Robotics / Coding</p>
+              <p class="mt-2 text-sm leading-6 text-muted">從不插電思維到插電程式實作。</p>
+            </div>
+            <div class="reveal glass-card gradient-border hover-lift rounded-[1.75rem] p-6">
+              <p class="text-4xl font-black text-techBlue">PBL</p>
+              <p class="mt-2 font-bold text-ink">Project-Based Learning</p>
+              <p class="mt-2 text-sm leading-6 text-muted">以作品成果建立孩子的學習自信。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI 解決方案 -->
+    <section id="solutions" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="reveal mx-auto mb-14 max-w-3xl text-center">
+          <span class="section-label">AI Solutions for Schools</span>
+          <h2 class="mt-5 text-3xl font-black tracking-tight text-ink sm:text-5xl">為學校打造可落地的 AI 科技學習方案。</h2>
+          <p class="mt-6 text-lg leading-8 text-muted">
+            伊隆國際將前沿科技轉化為孩子能理解、能操作、能創造的課程，協助教育單位建立兼具趣味性、實作性與未來競爭力的學習內容。
+          </p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-50 text-2xl text-techBlue">🤖</div>
+            <h3 class="text-xl font-black text-ink">AI Robotics 課程</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">透過機器人與感測器應用，培養邏輯思考、任務拆解與問題解決能力。</p>
+          </article>
+
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 text-2xl text-premiumPurple">⌘</div>
+            <h3 class="text-xl font-black text-ink">Unplugged & Coding</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">從不插電活動到程式實作，讓學生循序理解運算思維與程式邏輯。</p>
+          </article>
+
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-100 text-2xl text-mint">◇</div>
+            <h3 class="text-xl font-black text-ink">Roblox AI Gaming Design</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">結合 Roblox 遊戲創作與 AI 輔助設計，培養創意表達與互動設計能力。</p>
+          </article>
+
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-50 text-2xl text-techBlue">↗</div>
+            <h3 class="text-xl font-black text-ink">AI Project-Based Learning</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">引導學生觀察問題、設計流程、運用 AI 與程式邏輯完成作品。</p>
+          </article>
+        </div>
+
+        <div class="reveal mt-10 rounded-[2rem] border border-purple-200 bg-gradient-to-r from-purple-50/90 via-white/80 to-pink-50/80 p-8 shadow-glow backdrop-blur-xl">
+          <p class="text-lg leading-9 text-slate-700">
+            AI 教育的價值不在於讓孩子被科技取代，而是讓孩子學會善用科技，成為更有想像力、更具判斷力與行動力的創造者。課程透過專案式學習，引導學生從觀察問題、拆解任務、設計流程，到完成可展示的數位作品。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 實戰案例 -->
+    <section id="cases" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="reveal mb-12 max-w-3xl">
+          <span class="section-label">Cases & Collaborations</span>
+          <h2 class="mt-5 text-3xl font-black tracking-tight text-ink sm:text-5xl">從課堂導入到作品成果，讓科技學習更具體。</h2>
+          <p class="mt-6 text-lg leading-8 text-muted">以下為合作教育單位與課程成果方向，呈現伊隆國際在校園科技教育中的實作經驗。</p>
+        </div>
+
+        <div class="reveal glass-card rounded-[2rem] p-7 lg:p-10">
+          <h3 class="mb-6 text-xl font-black text-ink">合作教育單位</h3>
+          <div class="flex flex-wrap gap-3">
+            <span class="rounded-full border border-purple-200 bg-purple-50/80 px-5 py-3 text-sm font-bold text-techBlue">康橋國際學校</span>
+            <span class="rounded-full border border-purple-200 bg-white/80 px-5 py-3 text-sm font-bold text-slate-700">私立靜心小學</span>
+            <span class="rounded-full border border-purple-200 bg-purple-50/70 px-5 py-3 text-sm font-bold text-premiumPurple">私立再興小學</span>
+            <span class="rounded-full border border-purple-200 bg-white/80 px-5 py-3 text-sm font-bold text-slate-700">私立育才小學</span>
+            <span class="rounded-full border border-pink-200 bg-pink-50/70 px-5 py-3 text-sm font-bold text-mint">私立及人小學</span>
+            <span class="rounded-full border border-purple-200 bg-white/80 px-5 py-3 text-sm font-bold text-slate-700">市立建安國小</span>
+            <span class="rounded-full border border-purple-200 bg-purple-50/80 px-5 py-3 text-sm font-bold text-techBlue">市立雙永國小</span>
+          </div>
+        </div>
+
+        <div class="mt-8 grid gap-6 md:grid-cols-3">
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <p class="mb-5 text-sm font-black uppercase tracking-[0.16em] text-techBlue">Outcome 01</p>
+            <h3 class="text-xl font-black text-ink">從工具操作到專案實作</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">讓學生不只知道工具在哪裡，而是能用工具完成清楚、有目標的學習任務。</p>
+          </article>
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <p class="mb-5 text-sm font-black uppercase tracking-[0.16em] text-premiumPurple">Outcome 02</p>
+            <h3 class="text-xl font-black text-ink">從程式邏輯到創意作品</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">透過 AI、Robotics 與 Roblox 創作，讓學生把抽象概念轉化為可展示作品。</p>
+          </article>
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7">
+            <p class="mb-5 text-sm font-black uppercase tracking-[0.16em] text-mint">Outcome 03</p>
+            <h3 class="text-xl font-black text-ink">從科技學習到未來素養</h3>
+            <p class="mt-4 text-sm leading-7 text-muted">培養孩子面對未來所需的判斷力、創造力與解決問題的行動力。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="core-solutions" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        <span class="section-label">核心產品與技術解決方案</span>
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7 flex items-start gap-4">
+            <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-techBlue via-mint to-premiumPurple text-white shadow-glow">
+              <i class="fas fa-brain text-2xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-ink">AI Robotics</h3>
+              <p class="mt-3 text-sm leading-7 text-muted">結合人工智慧與機器人實作的課程解決方案，提升學習體驗與技術素養。</p>
+            </div>
+          </article>
+
+          <article class="reveal glass-card gradient-border hover-lift rounded-[2rem] p-7 flex items-start gap-4">
+            <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-premiumPurple via-techBlue to-mint text-white shadow-glow">
+              <i class="fas fa-vr-cardboard text-2xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-ink">Roblox AI Gaming Design</h3>
+              <p class="mt-3 text-sm leading-7 text-muted">透過 Roblox 與 AI 設計專案，打造創新遊戲教學與學生作品展示。</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="dependencies" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        <div class="reveal glass-card rounded-[2.5rem] border border-slate-200/70 bg-white/88 p-8 shadow-glow backdrop-blur-xl lg:p-10">
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <span class="section-label">External Dependencies</span>
+              <h3 class="mt-4 text-3xl font-black tracking-tight text-ink sm:text-4xl">多元社群圖示配置</h3>
+              <p class="mt-4 max-w-2xl text-sm leading-7 text-muted">以「外部依賴庫 (Dependencies)」的風格排列，呈現品牌社群連結與科技感圖示。</p>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="inline-flex items-center gap-3 rounded-3xl border border-slate-200/70 bg-slate-50 px-4 py-3 shadow-sm">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#00c300] text-white shadow-glow"><i class="fab fa-line text-xl"></i></span>
+                <div>
+                  <p class="font-black text-ink">LINE</p>
+                  <p class="text-xs text-muted">社群聯繫</p>
+                </div>
+              </div>
+              <div class="inline-flex items-center gap-3 rounded-3xl border border-slate-200/70 bg-slate-50 px-4 py-3 shadow-sm">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1877f2] text-white shadow-glow"><i class="fab fa-facebook-f text-xl"></i></span>
+                <div>
+                  <p class="font-black text-ink">Facebook</p>
+                  <p class="text-xs text-muted">官方粉絲頁</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demand-form" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        <div class="reveal glass-card rounded-[2.5rem] border border-blue-100 bg-white/85 p-8 shadow-glow backdrop-blur-xl lg:p-12">
+          <div class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+            <div>
+              <span class="section-label">填寫需求表單</span>
+              <h3 class="mt-5 text-3xl font-black tracking-tight text-ink sm:text-4xl">讓我們了解你的專案需求</h3>
+              <p class="mt-6 max-w-2xl text-lg leading-8 text-muted">點選下方按鈕後，即可前往 Google Form 填寫詳細需求。我們會依據需求快速回覆並提供專業規劃建議。</p>
+            </div>
+            <div class="flex flex-col gap-5 rounded-[2rem] border border-slate-200/70 bg-slate-50/90 p-8 shadow-sm">
+              <div class="space-y-4">
+                <div class="rounded-2xl bg-white p-4 shadow-sm">
+                  <p class="font-semibold text-ink">姓名 / 學校 / 單位</p>
+                  <p class="text-sm text-muted">請準備基本聯絡資訊，方便後續回覆。</p>
+                </div>
+                <div class="rounded-2xl bg-white p-4 shadow-sm">
+                  <p class="font-semibold text-ink">需求類型</p>
+                  <p class="text-sm text-muted">例如：AI Robotics、Roblox AI Gaming、營隊設計、教案開發。</p>
+                </div>
+                <div class="rounded-2xl bg-white p-4 shadow-sm">
+                  <p class="font-semibold text-ink">預計時程</p>
+                  <p class="text-sm text-muted">讓我們了解你的時程安排與預算考量。</p>
+                </div>
+              </div>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSduUIfwe1MuDn1vWbSuGAagwO3zVPY8F9X17XrNppPUmGP1GA/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full bg-techBlue px-6 py-4 text-sm font-black text-white shadow-glow transition hover:bg-slate-900">
+                立即填寫需求表單
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 預約諮詢 CTA -->
+    <section id="contact" class="px-5 py-24 lg:px-8">
+      <div class="mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-blue-100 bg-white/78 p-8 shadow-glow backdrop-blur-xl lg:p-14">
+        <div class="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
+          <div class="reveal">
+            <span class="section-label">Book a Consultation</span>
+            <h2 class="mt-5 text-3xl font-black tracking-tight text-ink sm:text-5xl">Ready to Build the Next AI Learning Experience?</h2>
+            <p class="mt-6 max-w-3xl text-lg leading-9 text-muted">
+              如果你正在為學校、營隊或教育機構規劃 AI、機器人或 Roblox 創意程式課程，歡迎預約諮詢，一起打造適合孩子的未來學習方案。
+            </p>
+          </div>
+
+          <div class="reveal flex flex-col gap-4 lg:items-end">
+            <a href="https://calendar.app.google/NwBgNLT8yzHWmxRZ6" target="_blank" rel="noopener noreferrer" class="cta-status inline-flex items-center justify-center rounded-full border border-blue-200 bg-white/85 px-7 py-4 text-sm font-black text-techBlue shadow-glow transition">
+              預約 AI 教育課程諮詢
+              <span class="status-text text-mint">Status: Ready to Connect</span>
+            </a>
+            <p class="text-sm font-semibold text-muted">AI Robotics / Roblox AI Gaming Design</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200/70 bg-white/70 px-5 py-10 backdrop-blur-xl lg:px-8">
+    <div class="mx-auto flex max-w-7xl flex-col gap-5 text-sm text-muted md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="font-black text-ink">劉軒瑋｜伊隆國際股份有限公司</p>
+        <p class="mt-2">AI Robotics / Roblox AI Gaming Design</p>
+      </div>
+      <div class="md:text-right">
+        <p>Empowering young creators through AI, robotics, and game-based learning.</p>
+        <p class="mt-2">© <span id="year"></span> Elon International. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================
+       1. 手機選單開合
+       ========================= */
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    menuBtn.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    mobileLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* =========================
+       2. Hero 打字機特效
+       ========================= */
+    const typingTarget = document.getElementById('typewriter');
+    const typingText = 'AI Robotics/Roblox AI Gaming Design';
+    let typingIndex = 0;
+
+    function typeWriter() {
+      if (typingIndex <= typingText.length) {
+        typingTarget.textContent = typingText.slice(0, typingIndex);
+        typingIndex += 1;
+        setTimeout(typeWriter, typingIndex < 12 ? 70 : 42);
+      } else {
+        setTimeout(() => {
+          typingIndex = 0;
+          typeWriter();
+        }, 3600);
+      }
+    }
+    typeWriter();
+
+    /* =========================
+       3. 卡片滾動進場動畫
+       ========================= */
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    revealElements.forEach((el) => revealObserver.observe(el));
+
+    /* =========================
+       4. 淡藍粒子與節點連接動畫
+       ========================= */
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationFrame;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    }
+
+    function createParticles() {
+      const count = Math.min(82, Math.floor(window.innerWidth / 18));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.28,
+        vy: (Math.random() - 0.5) * 0.28,
+        r: Math.random() * 1.9 + 0.8
+      }));
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1;
+        if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(37, 99, 235, 0.26)';
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 125) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = `rgba(37, 99, 235, ${0.12 * (1 - distance / 125)})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      animationFrame = requestAnimationFrame(drawParticles);
+    }
+
+    function initParticleCanvas() {
+      cancelAnimationFrame(animationFrame);
+      resizeCanvas();
+      createParticles();
+      drawParticles();
+    }
+
+    window.addEventListener('resize', initParticleCanvas);
+    initParticleCanvas();
+
+    /* =========================
+       5. Footer 年份自動更新
+       ========================= */
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
